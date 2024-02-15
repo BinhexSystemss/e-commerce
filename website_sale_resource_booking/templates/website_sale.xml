@@ -157,4 +157,55 @@
             />
         </t>
     </template>
+
+    <template id="confirmation" inherit_id="website_sale.confirmation">
+        <xpath
+            expr="//div[@id='oe_structure_website_sale_confirmation_2']"
+            position="inside"
+        >
+            <t t-if="order.resource_booking_count">
+                <t t-set="bookings" t-value="order.resource_booking_ids" />
+                <section class="s_title" data-snippet="s_title" data-name="Title">
+                    <div class="s_allow_columns container">
+                        <h4>
+                            Confirmed <t t-if="len(bookings) == 1">booking</t><t
+                                t-else=""
+                            >bookings</t>:
+                        </h4>
+                    </div>
+                </section>
+                <section class="pb32 o_cc o_cc2 o_colored_level bg-transparent">
+                    <div class="s_nb_column_fixed" t-foreach="bookings" t-as="booking">
+                        <t
+                            t-set="booking_resource_calendar"
+                            t-value="booking.combination_id.forced_calendar_id or booking.type_id.resource_calendar_id"
+                        />
+
+                        <ul>
+                            <li> Start: <strong><span
+                                        t-field="booking.with_context(tz=booking_resource_calendar.tz).start"
+                                    /></strong>
+                            </li>
+                            <li> Requester: <strong t-field="booking.partner_id" />
+                            </li>
+
+                            <li> Duration: <strong
+                                    t-field="booking.duration"
+                                    t-options='{"widget": "float_time"}'
+                                />
+                            </li>
+                        </ul>
+                        <div class="col-lg-8">
+                            <h5 t-esc="booking.product_id.name" />
+                            <a
+                                class="btn btn-primary mb-2"
+                                t-attf-href="/my/bookings/#{booking.id}?access_token=#{booking.access_token}"
+                            >Go to Booking</a>
+                        </div>
+                   </div>
+                </section>
+            </t>
+        </xpath>
+    </template>
+
 </data>
